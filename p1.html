@@ -1,0 +1,203 @@
+P1:Lab Exercise: Setting up and Exploring MongoDB
+a) Install MongoDB on your local machine or lab server.
+#Download comunity version from official website - https://www.mongodb.com/products/self-managed/community-edition
+#Open terminal: 
+#And install mongodb
+>> 
+cd Downloads
+ls
+sudo dpkg -i <mongodb debian file>
+
+#Check the status of mongodb after installation by mongo demon by mongod: 
+sudo systemctl status mongod
+
+####
+In above case status is active but in case status is in active the type following command : 
+.. or in case stop the server : 
+sudo systemctl stop mongod
+####
+#Now install Commandline interface [MongoShell] from again official website of mongodb from tool section : 
+#Now install mongo shell:
+sudo dpkg -i <mongo shell file>
+#Now can start code on mongodb by shell>> 
+#By command.. 
+mongosh 
+
+#If you want to use tool graphical user interface then again install [Compass] from official website of mongodb: In tool section
+#After download Compass install it: 
+sudo dpkg -i <mongo compass>
+
+#Interface of Compass: 
+#local machine not in terminal
+#############################
+b) Create a new MongoDB database and collection.
+###############################
+#First see show dbs.. 
+Show dbs 
+#create datebase 
+Use college
+#college is database name 
+#Now create collection: 
+db.createCollection("student") 
+
+Here is a detailed breakdown of MongoDB operations in English, including all possible examples.  
+
+---
+
+## **(b) Create a New MongoDB Database and Collection**
+
+### **Example 1: Basic Database and Collection Creation**
+```javascript
+use mydatabase  // Creates or switches to the database "mydatabase"
+db.createCollection("students")  // Creates a collection named "students"
+```
+
+### **Example 2: Create a Collection with Options**
+```javascript
+db.createCollection("students", { capped: true, size: 1024 })  
+```
+- **capped: true** → Creates a fixed-size collection  
+- **size: 1024** → The collection size is limited to 1024 bytes  
+
+### **Example 3: Create a Collection Automatically**
+MongoDB creates a collection automatically when a document is inserted:
+```javascript
+use mydatabase
+db.students.insertOne({ name: "Rahul", age: 22, course: "Mathematics" })
+```
+- If the `students` collection does not exist, it will be created automatically.
+
+---
+
+## **(c) Insert Sample Data into the Collection**
+
+### **Example 1: Insert a Single Document**
+```javascript
+db.students.insertOne({
+   name: "Amit",
+   age: 22,
+   course: "Mathematics",
+   address: { city: "Mumbai", pincode: 400001 }
+})
+```
+
+### **Example 2: Insert Multiple Documents**
+```javascript
+db.students.insertMany([
+   { name: "Rohit", age: 23, course: "Computing", city: "Delhi" },
+   { name: "Priya", age: 21, course: "Physics", city: "Pune" },
+   { name: "Sneha", age: 24, course: "Biotechnology", city: "Chennai" }
+])
+```
+
+### **Example 3: Insert a Document with an Array Field**
+```javascript
+db.students.insertOne({
+   name: "Karan",
+   age: 25,
+   courses: ["Math", "Physics", "Computer Science"]
+})
+```
+- The `courses` field is an array that can store multiple values.
+
+---
+
+## **(d) Retrieve and Display Data from the Collection Using MongoDB Queries**
+
+### **Example 1: Retrieve All Documents**
+```javascript
+db.students.find()
+```
+- Returns all documents in the collection.
+
+### **Example 2: Retrieve All Documents in Pretty Format**
+```javascript
+db.students.find().pretty()
+```
+- Displays the output in a well-formatted structure.
+
+### **Example 3: Find a Specific Document**
+```javascript
+db.students.find({ name: "Amit" })
+```
+- Returns only the document where `name` is "Amit".
+
+### **Example 4: Retrieve Specific Fields**
+```javascript
+db.students.find({}, { name: 1, course: 1, _id: 0 })
+```
+- Returns only the `name` and `course` fields while excluding `_id`.
+
+### **Example 5: Retrieve Data with Conditions**
+
+#### **(a) Find Students Older Than 22**
+```javascript
+db.students.find({ age: { $gt: 22 } })
+```
+- Fetches students whose age is greater than 22 (`$gt` means "greater than").
+
+#### **(b) Find Students in a Specific City**
+```javascript
+db.students.find({ city: "Delhi" })
+```
+- Fetches all students from "Delhi".
+
+#### **(c) Find Students with Multiple Conditions (AND Query)**
+```javascript
+db.students.find({ age: { $gt: 20 }, city: "Pune" })
+```
+- Fetches students who are older than 20 **AND** are from "Pune".
+
+#### **(d) Find Students Using OR Condition**
+```javascript
+db.students.find({ $or: [{ city: "Delhi" }, { city: "Mumbai" }] })
+```
+- Fetches students from either "Delhi" **OR** "Mumbai".
+
+### **Example 6: Search Using Regular Expressions**
+```javascript
+db.students.find({ name: { $regex: "^A" } })
+```
+- Finds students whose names start with "A".
+
+### **Example 7: Find Documents with an Array Field Condition**
+```javascript
+db.students.find({ courses: "Physics" })
+```
+- Checks if "Physics" is present in any student's `courses` array.
+
+### **Example 8: Count Total Documents**
+```javascript
+db.students.countDocuments()
+```
+- Returns the total number of documents in the collection.
+
+### **Example 9: Limit and Sort Data**
+
+#### **(a) Retrieve the First 3 Students**
+```javascript
+db.students.find().limit(3)
+```
+
+#### **(b) Sort by Age in Ascending Order**
+```javascript
+db.students.find().sort({ age: 1 })
+```
+- **1 → Ascending Order**  
+- **-1 → Descending Order**
+
+### **Example 10: Retrieve Data Using Projection**
+
+#### **(a) Show Only Name and City**
+```javascript
+db.students.find({}, { name: 1, city: 1, _id: 0 })
+```
+- Displays only `name` and `city`, excluding `_id`.
+
+#### **(b) Exclude Age**
+```javascript
+db.students.find({}, { age: 0 })
+```
+- Shows all fields except `age`.
+
+---
