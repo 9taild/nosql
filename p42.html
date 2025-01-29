@@ -1,0 +1,202 @@
+Apache Cassandra Operations
+a) Install and configure Apache Cassandra in a lab environment.
+#Install java
+sudo apt update
+sudo apt install default-jre
+sudo apt install default-jdk
+javac -version
+java -version
+#Install Apache Cassandra in ubuntu
+echo "deb https://debian.cassandra.apache.org 41x main" | sudo tee -a
+/etc/apt/sources.list.d/cassandra.sources.list
+curl https://downloads.apache.org/cassandra/KEYS | sudo apt-key add –
+sudo apt-get update
+sudo apt-get install cassandra
+nodetool status
+sudo systemctl start cassandra
+cqlsh
+
+b) Create a keyspace and define a table schema. (in my example the name of keyspace is
+users)
+CREATE KEYSPACE users WITH replication = {'class':'SimpleStrategy',
+'replication_factor':1};
+USE users;
+CREATE TABLE users (
+id UUID PRIMARY KEY,
+name TEXT,
+email TEXT
+);
+c) Insert data into the table.
+• To be searched and performed by students using Apache Cassandra documentation
+• Atleast insert 10 to 15 rows
+
+d) Perform CRUD operations and query data from Apache Cassandra.
+• To be searched and performed by students using Apache Cassandra documentation
+• Atleast perform 5 to 10 operations for Read, update and Delete each separately
+
+###############################################################################
+### **c) Inserting Data into Apache Cassandra Table**
+
+Let's assume you've already created a table called `students` in the `student_db` keyspace with columns for `id`, `name`, `age`, and `course`. To insert data into the table, you can use the following syntax in **CQL (Cassandra Query Language)**:
+
+```cql
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'John Doe', 22, 'Mathematics');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Alice Smith', 21, 'Computer Science');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Bob Brown', 24, 'Physics');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Charlie Davis', 23, 'Biology');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'David Evans', 25, 'Chemistry');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Eva Green', 22, 'Mathematics');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Frank Harris', 26, 'Computer Science');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Grace Lee', 22, 'Physics');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Hannah Miller', 20, 'Chemistry');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Irene Johnson', 24, 'Biology');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Jack Walker', 23, 'Mathematics');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Katie Allen', 21, 'Computer Science');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Leo Scott', 25, 'Physics');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Mona Wright', 22, 'Chemistry');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Nathan Young', 27, 'Biology');
+```
+
+This command will insert 15 rows into the `students` table with random **UUIDs** as the primary key for the `id` column. You can generate a UUID by using the `uuid()` function in Cassandra, which creates a universally unique identifier.
+
+To check if the data was inserted, use:
+```cql
+SELECT * FROM students;
+```
+
+---
+
+### **d) Performing CRUD Operations in Apache Cassandra**
+
+CRUD operations in Cassandra (and most NoSQL databases) are usually done with **CQL**. Below are examples of **5 to 10 operations for Read, Update, and Delete**:
+
+---
+
+### **Read Operations**
+
+1. **Read All Data**:
+```cql
+SELECT * FROM students;
+```
+
+2. **Read Specific Columns**:
+```cql
+SELECT name, age FROM students;
+```
+
+3. **Read Data by Specific Condition**:
+```cql
+SELECT * FROM students WHERE course='Mathematics';
+```
+
+4. **Read Data by Multiple Conditions**:
+```cql
+SELECT * FROM students WHERE age > 22 AND course='Physics';
+```
+
+5. **Read Data with a LIMIT**:
+```cql
+SELECT * FROM students LIMIT 5;
+```
+
+---
+
+### **Update Operations**
+
+1. **Update Single Column**:
+```cql
+UPDATE students SET age = 23 WHERE id = <uuid_value>;
+```
+
+2. **Update Multiple Columns**:
+```cql
+UPDATE students SET age = 24, course = 'Computer Engineering' WHERE id = <uuid_value>;
+```
+
+3. **Update Data Based on Specific Condition**:
+```cql
+UPDATE students SET course = 'Data Science' WHERE name = 'John Doe';
+```
+
+4. **Update Data for a Specific Student**:
+```cql
+UPDATE students SET name = 'Charlie Brown' WHERE id = <uuid_value>;
+```
+
+5. **Update Multiple Rows (based on a condition)**:
+```cql
+UPDATE students SET course = 'Physics' WHERE age > 23;
+```
+
+---
+
+### **Delete Operations**
+
+1. **Delete Specific Row**:
+```cql
+DELETE FROM students WHERE id = <uuid_value>;
+```
+
+2. **Delete Data by Condition**:
+```cql
+DELETE FROM students WHERE name = 'John Doe';
+```
+
+3. **Delete All Rows with Specific Condition**:
+```cql
+DELETE FROM students WHERE course = 'Computer Science';
+```
+
+4. **Delete Specific Column**:
+```cql
+DELETE age FROM students WHERE id = <uuid_value>;
+```
+
+5. **Delete All Data (for a specific student)**:
+```cql
+DELETE FROM students WHERE name = 'Bob Brown';
+```
+
+6. **Delete All Rows in Table**:
+To delete all data from a table, truncate it (remove all rows):
+```cql
+TRUNCATE students;
+```
+
+---
+
+### **Additional Operations**
+
+1. **Count Rows in Table**:
+```cql
+SELECT COUNT(*) FROM students;
+```
+
+2. **Create Index on a Column**:
+```cql
+CREATE INDEX ON students (course);
+```
+
+3. **Check Schema (Keyspace & Table Details)**:
+```cql
+DESCRIBE KEYSPACES;
+DESCRIBE TABLE students;
+```
+
+4. **Drop a Table**:
+```cql
+DROP TABLE students;
+```
+
+---
+
+### **Final Notes**
+- **Read Operations** allow you to fetch data based on specific columns or conditions.
+- **Update Operations** change existing data for a given row identified by the primary key.
+- **Delete Operations** remove rows or individual columns from the table.
+
+You can find more detailed explanations in the [official Cassandra documentation](https://cassandra.apache.org/doc/latest/).
+
+---
+
+Let me know if you need further clarification or examples! 
