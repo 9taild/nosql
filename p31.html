@@ -1,0 +1,342 @@
+#p3
+
+# setup hbase
+Setting up an **HBase cluster** in a **lab environment** involves configuring multiple nodes with HBase running in a distributed mode. Since you're using **Ubuntu 24.4 Linux** and working on **NoSQL databases**, follow these steps:
+
+---
+
+## **Prerequisites**
+### **1. System Requirements**
+- At least **2 nodes** (1 Master, 1+ Slave).
+- **Java 8 or 11** installed.
+- **Hadoop installed** and running in distributed mode.
+- **SSH configured** for passwordless login.
+
+---
+
+## **Step 1: Install Java**
+HBase requires Java. Install it using:
+```bash
+sudo apt update
+sudo apt install openjdk-11-jdk -y
+java -version
+```
+
+---
+
+## **Step 2: Install Hadoop (If Not Installed)**
+HBase requires Hadoop’s HDFS as the underlying storage system.
+
+### **Install Hadoop**
+Download and extract Hadoop:
+```bash
+wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz
+tar -xvzf hadoop-3.3.6.tar.gz
+mv hadoop-3.3.6 ~/hadoop
+```
+
+### **Set Environment Variables**
+Edit `~/.bashrc`:
+```bash
+nano ~/.bashrc
+```
+Add:
+```bash
+export HADOOP_HOME=~/hadoop
+export PATH=$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+```
+Apply changes:
+```bash
+source ~/.bashrc
+```
+
+---
+
+## **Step 3: Configure Hadoop Cluster**
+### **Edit Hadoop Configuration Files**
+#### **1. core-site.xml**
+Edit:
+```bash
+nano ~/hadoop/etc/hadoop/core-site.xml
+```
+Add:
+```xml
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://master:9000</value>
+    </property>
+</configuration>
+```
+
+#### **2. hdfs-site.xml**
+Edit:
+```bash
+nano ~/hadoop/etc/hadoop/hdfs-site.xml
+```
+Add:
+```xml
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>2</value>
+    </property>
+</configuration>
+```
+
+#### **3. Format HDFS and Start Hadoop**
+```bash
+hdfs namenode -format
+start-dfs.sh
+jps  # Check NameNode, DataNode are running
+```
+
+---
+
+## **Step 4: Install HBase**
+Download and extract HBase:
+```bash
+wget https://downloads.apache.org/hbase/2.4.17/hbase-2.4.17-bin.tar.gz
+tar -xvzf hbase-2.4.17-bin.tar.gz
+mv hbase-2.4.17 ~/hbase
+```
+
+### **Set Environment Variables**
+Edit `~/.bashrc`:
+```bash
+nano ~/.bashrc
+```
+Add:
+```bash
+export HBASE_HOME=~/hbase
+export PATH=$HBASE_HOME/bin:$PATH
+export HBASE_CONF_DIR=$HBASE_HOME/conf
+```
+Apply changes:
+```bash
+source ~/.bashrc
+```
+
+---
+
+## **Step 5: Configure HBase**
+### **1. hbase-site.xml**
+Edit:
+```bash
+nano ~/hbase/conf/hbase-site.xml
+```
+Add:
+```xml
+<configuration>
+    <property>
+        <name>hbase.cluster.distributed</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hbase.rootdir</name>
+        <value>hdfs://master:9000/hbase</value>
+    </property>
+    <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>master,slave1</value>
+    </property>
+</configuration>
+```
+
+### **2. regionservers**
+List all slave nodes:
+```bash
+nano ~/hbase/conf/regionservers
+```
+Add:
+```
+slave1
+slave2
+```
+
+---
+
+## **Step 6: Start HBase**
+### **1. Start Zookeeper (If Not Running)**
+```bash
+start-zookeeper.sh
+```
+
+### **2. Start HBase**
+On the master node:
+```bash
+start-hbase.sh
+```
+Check if it’s running:
+```bash
+jps  # Should see HMaster, HRegionServer
+```
+
+---
+
+## **Step 7: Verify HBase Cluster**
+Run HBase shell:
+```bash
+hbase shell
+```
+Create a table to test:
+```hbase
+create 'test_table', 'cf'
+list
+```
+#############################
+Since you're setting up an **HBase cluster**, let's go in-depth into **creating a table, defining column families, inserting data, and performing CRUD operations** using **HBase Shell** and **Java API**.
+
+---
+
+# **b) Create an HBase Table and Define Column Families**
+HBase is a **column-oriented NoSQL database** where **data is stored in column families** instead of rows like relational databases.
+
+## **1. Create a Table using HBase Shell**
+### **Open HBase Shell**
+Start HBase first:
+```bash
+start-hbase.sh
+hbase shell
+```
+### **Create a Table with Column Families**
+Syntax:
+```hbase
+create 'table_name', 'column_family1', 'column_family2', ...
+```
+#### **Example: Creating a Student Table**
+```hbase
+create 'students', 'personal', 'academic'
+```
+- **Table Name**: `students`
+- **Column Families**:
+  - `personal` → Stores student name, age, gender.
+  - `academic` → Stores marks, grades, and course details.
+
+### **Verify Table Creation**
+Check if the table exists:
+```hbase
+list
+```
+Get table details:
+```hbase
+describe 'students'
+```
+
+---
+
+# **c) Insert Sample Data into the Table**
+### **Insert Data Using HBase Shell**
+Syntax:
+```hbase
+put 'table_name', 'row_key', 'column_family:column', 'value'
+```
+#### **Example: Adding Student Data**
+```hbase
+put 'students', '1001', 'personal:name', 'John Doe'
+put 'students', '1001', 'personal:age', '22'
+put 'students', '1001', 'personal:gender', 'Male'
+put 'students', '1001', 'academic:course', 'Mathematics'
+put 'students', '1001', 'academic:marks', '85'
+```
+Here:
+- Row Key: `1001` (unique identifier for a student).
+- Column Family `personal`:
+  - `name`: John Doe
+  - `age`: 22
+  - `gender`: Male
+- Column Family `academic`:
+  - `course`: Mathematics
+  - `marks`: 85
+
+### **Verify Inserted Data**
+```hbase
+scan 'students'
+```
+
+---
+
+# **d) Perform CRUD Operations in HBase**
+HBase supports **CRUD (Create, Read, Update, Delete) operations**.
+
+## **1. Read (Retrieve Data)**
+### **Read a Single Row**
+```hbase
+get 'students', '1001'
+```
+Output:
+```
+COLUMN                    CELL
+ personal:name            timestamp=..., value=John Doe
+ personal:age             timestamp=..., value=22
+ personal:gender          timestamp=..., value=Male
+ academic:course          timestamp=..., value=Mathematics
+ academic:marks           timestamp=..., value=85
+```
+
+### **Read Specific Column**
+```hbase
+get 'students', '1001', 'personal:name'
+```
+
+### **Read All Data (Scan)**
+```hbase
+scan 'students'
+```
+
+---
+
+## **2. Update Data**
+Updating data in HBase is done using the same `put` command.
+
+#### **Example: Updating Marks**
+```hbase
+put 'students', '1001', 'academic:marks', '90'
+```
+Check again:
+```hbase
+get 'students', '1001', 'academic:marks'
+```
+
+---
+
+## **3. Delete Data**
+### **Delete a Specific Column**
+```hbase
+delete 'students', '1001', 'personal:age'
+```
+Verify:
+```hbase
+get 'students', '1001'
+```
+
+### **Delete an Entire Row**
+```hbase
+deleteall 'students', '1001'
+```
+Verify:
+```hbase
+get 'students', '1001'
+```
+(Should return nothing.)
+
+---
+
+## **4. Drop (Delete) a Table**
+### **Disable the Table**
+```hbase
+disable 'students'
+```
+### **Drop the Table**
+```hbase
+drop 'students'
+```
+### **Verify**
+```hbase
+list
+```
+(Students table should no longer be listed.)
+
+---
+
