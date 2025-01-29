@@ -1,0 +1,310 @@
+#P4 apache cassendra
+### **Installing and Configuring Apache Cassandra in a Lab Environment on Ubuntu 24.4**
+
+Apache Cassandra is a **highly scalable, distributed NoSQL database** designed for handling large amounts of data across multiple servers with high availability.
+
+---
+
+## **Prerequisites**
+- OS: **Ubuntu 24.4 Linux**
+- Minimum **4GB RAM** (Cassandra works best with 8GB+)
+- **Java 8 or later** installed
+- **Internet connection** for downloading packages
+
+---
+
+# **Step 1: Install Java (If Not Installed)**
+Cassandra requires **Java 8 or 11**. Install OpenJDK:
+```bash
+sudo apt update
+sudo apt install openjdk-11-jdk -y
+```
+Verify Java installation:
+```bash
+java -version
+```
+Expected Output:
+```
+openjdk version "11.0.x" ...
+```
+
+---
+
+# **Step 2: Install Apache Cassandra**
+### **1. Add Cassandra Repository**
+```bash
+echo "deb https://downloads.apache.org/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.list
+```
+### **2. Add GPG Key**
+```bash
+curl https://downloads.apache.org/cassandra/KEYS | sudo apt-key add -
+```
+### **3. Update and Install Cassandra**
+```bash
+sudo apt update
+sudo apt install cassandra -y
+```
+
+---
+
+# **Step 3: Start and Verify Cassandra**
+### **1. Start Cassandra Service**
+```bash
+sudo systemctl start cassandra
+```
+Enable Cassandra to start on boot:
+```bash
+sudo systemctl enable cassandra
+```
+
+### **2. Check Cassandra Status**
+```bash
+nodetool status
+```
+Expected Output:
+```
+Datacenter: datacenter1
+Status=Up/Normal (UN)
+```
+If it's **not running**, check logs:
+```bash
+sudo journalctl -u cassandra --no-pager
+```
+
+---
+
+# **Step 4: Configure Apache Cassandra**
+The main configuration file for Cassandra is **`/etc/cassandra/cassandra.yaml`**.
+
+### **1. Change Cluster Name**
+Edit **cassandra.yaml**:
+```bash
+sudo nano /etc/cassandra/cassandra.yaml
+```
+Find:
+```yaml
+cluster_name: 'Test Cluster'
+```
+Change `"Test Cluster"` to a custom name, e.g., `"MyCassandraCluster"`.
+
+### **2. Set the Listen Address**
+Find:
+```yaml
+listen_address: localhost
+rpc_address: localhost
+```
+If setting up a cluster, replace `localhost` with the node’s IP:
+```yaml
+listen_address: 192.168.1.10
+rpc_address: 0.0.0.0
+```
+### **3. Configure Seed Nodes (For Multi-Node Cluster)**
+Find:
+```yaml
+seeds: "127.0.0.1"
+```
+Replace with IPs of other nodes in the cluster:
+```yaml
+seeds: "192.168.1.10,192.168.1.11"
+```
+
+### **4. Restart Cassandra**
+```bash
+sudo systemctl restart cassandra
+```
+
+---
+
+# **Step 5: Connect to Cassandra and Run Queries**
+Apache Cassandra uses **CQL (Cassandra Query Language)**.
+
+### **1. Open CQL Shell**
+```bash
+cqlsh
+```
+### **2. Check Cluster Information**
+```cql
+SELECT cluster_name FROM system.local;
+```
+
+---
+
+# **Step 6: Create a Keyspace and Table**
+### **1. Create a Keyspace**
+A **keyspace** is like a database in SQL.
+```cql
+CREATE KEYSPACE student_db WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+```
+Verify:
+```cql
+DESCRIBE KEYSPACES;
+```
+
+### **2. Use the Keyspace**
+```cql
+USE student_db;
+```
+
+### **3. Create a Table**
+```cql
+CREATE TABLE students (
+    id UUID PRIMARY KEY,
+    name TEXT,
+    age INT,
+    course TEXT
+);
+```
+Verify:
+```cql
+DESCRIBE TABLES;
+```
+
+---
+
+# **Step 7: Insert Sample Data**
+```cql
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'John Doe', 22, 'Mathematics');
+INSERT INTO students (id, name, age, course) VALUES (uuid(), 'Alice Smith', 21, 'Computer Science');
+```
+
+### **Check Inserted Data**
+```cql
+SELECT * FROM students;
+```
+
+---
+
+# **Step 8: Perform CRUD Operations**
+### **1. Read Data**
+```cql
+SELECT name, age FROM students WHERE course='Mathematics';
+```
+### **2. Update Data**
+```cql
+UPDATE students SET age = 23 WHERE name = 'John Doe';
+```
+Verify:
+```cql
+SELECT * FROM students WHERE name='John Doe';
+```
+### **3. Delete a Record**
+```cql
+DELETE FROM students WHERE name='Alice Smith';
+```
+Verify:
+```cql
+SELECT * FROM students;
+```
+
+---
+
+# **Step 9: Stop and Restart Cassandra**
+### **Stop Cassandra**
+```bash
+sudo systemctl stop cassandra
+```
+### **Restart Cassandra**
+```bash
+sudo systemctl restart cassandra
+```
+
+---
+
+# **Step 10: Remove or Uninstall Cassandra**
+If you need to remove Cassandra:
+```bash
+sudo systemctl stop cassandra
+sudo apt remove cassandra -y
+sudo rm -rf /var/lib/cassandra
+```
+
+---
+# IF node ip problem:
+### **What is a Node IP in Apache Cassandra?**  
+
+A **Node IP** in Cassandra refers to the **IP address of a machine (node) in a Cassandra cluster**. This IP is used for communication between nodes and for clients to connect to the database.
+
+---
+
+### **How to Find the Node IP?**  
+
+#### **1. Check Your Machine’s IP Address**
+Run the following command on your machine:
+```bash
+ip a | grep inet
+```
+or  
+```bash
+hostname -I
+```
+Expected Output:
+```
+192.168.1.10 127.0.0.1
+```
+- **192.168.1.10** → Private IP (Node IP)
+- **127.0.0.1** → Localhost (Not used in cluster mode)
+
+---
+
+#### **2. Check Cassandra Listen Address**
+To see what IP Cassandra is using, check:
+```bash
+cat /etc/cassandra/cassandra.yaml | grep "listen_address"
+```
+If it shows:
+```yaml
+listen_address: localhost
+```
+then Cassandra is only accessible locally.
+
+---
+
+#### **3. Change Node IP (For Cluster Setup)**
+If you are setting up a multi-node cluster, update **`/etc/cassandra/cassandra.yaml`**:
+
+```bash
+sudo nano /etc/cassandra/cassandra.yaml
+```
+Find:
+```yaml
+listen_address: localhost
+rpc_address: localhost
+```
+Change `localhost` to your Node IP:
+```yaml
+listen_address: 192.168.1.10
+rpc_address: 0.0.0.0
+```
+Save and restart Cassandra:
+```bash
+sudo systemctl restart cassandra
+```
+
+---
+
+### **4. Verify Cassandra Nodes**
+To check all nodes in your Cassandra cluster:
+```bash
+nodetool status
+```
+Example Output:
+```
+Datacenter: datacenter1
+========================
+Status=Up/Normal (UN)
+Address         Load       Tokens  Owns    Host ID                               Rack
+192.168.1.10   1.25 GB    256     ?       1234abcd-5678-ef90-gh12-ijklmnopqrst  rack1
+192.168.1.11   1.10 GB    256     ?       5678efgh-1234-ijkl-90mn-opqrstuvabcd  rack1
+```
+- **192.168.1.10** → **Node 1 IP**
+- **192.168.1.11** → **Node 2 IP**
+
+---
+
+### **Summary**
+- **Node IP** = The private IP assigned to a Cassandra node.
+- **Find Node IP** using `hostname -I` or `ip a`.
+- **Set Node IP** in `cassandra.yaml` (`listen_address`).
+- **Check running nodes** using `nodetool status`.
+
+Let me know if you need further clarification! 🚀
