@@ -1,0 +1,145 @@
+### **HBase Operations for the 'student' Table**
+
+Let's walk through each of the operations in detail:
+
+#### **1. Create Table with Two Column Families ('info' and 'grades')**
+To create a table named `student` with column families `info` and `grades`:
+```shell
+create 'student', 'info', 'grades'
+```
+
+#### **2. Insert Data**
+To insert the name "John Doe" into the `info:name` column for the corresponding row (assume row key is '1'):
+```shell
+put 'student', '1', 'info:name', 'John Doe'
+```
+
+#### **3. Get Student Information**
+To retrieve all information for the student with ID '1' (John Doe):
+```shell
+get 'student', '1'
+```
+
+#### **4. Update Grade**
+To update John Doe's math grade from 'B' to 'A' in the `grades:math` column:
+```shell
+put 'student', '1', 'grades:math', 'A'
+```
+
+#### **5. Get Specific Column**
+To fetch only the name of the student with ID '1':
+```shell
+get 'student', '1', 'info:name'
+```
+
+#### **6. Scan Table**
+To scan and display all rows (students) in the `student` table:
+```shell
+scan 'student'
+```
+
+#### **7. Get Multiple Rows**
+To retrieve information for students with IDs '2' and '3':
+```shell
+get 'student', '2'
+get 'student', '3'
+```
+
+#### **8. Delete Data**
+To remove John Doe's name from the `info:name` column:
+```shell
+delete 'student', '1', 'info:name'
+```
+
+#### **9. Get All Columns in a Row**
+To retrieve all columns for the student with ID '1':
+```shell
+get 'student', '1'
+```
+
+#### **10. Filter Data by Grade**
+To find all students who scored 'A' in any subject (e.g., `grades:math`):
+```shell
+scan 'student', { FILTER => "SingleColumnValueFilter('grades', 'math', =, 'binary:A')" }
+```
+
+#### **11. Count Rows**
+To count the total number of rows (students) in the `student` table:
+```shell
+count 'student'
+```
+
+#### **12. Get Latest Version of a Cell**
+To get the most recent version of John Doe's name from the `info:name` column:
+```shell
+get 'student', '1', {COLUMN => 'info:name', VERSION => 1}
+```
+
+#### **13. Scan with Row Filter**
+To scan and view information for students whose IDs start with '2':
+```shell
+scan 'student', {FILTER => "RowFilter(=, 'regexstring', '^2.*')" }
+```
+
+#### **14. Delete Entire Row**
+To delete the entire row for the student with ID '2':
+```shell
+deleteall 'student', '2'
+```
+
+#### **15. Get Row with Maximum Version**
+To retrieve the student with ID '1' but limited to the last two versions of the columns:
+```shell
+get 'student', '1', {VERSION => 2}
+```
+
+#### **16. Scan with Column Range**
+To scan and view only the `info` and `grades` columns for all students:
+```shell
+scan 'student', {COLUMN => ['info', 'grades']}
+```
+
+#### **17. Filter Data by Name Prefix**
+To find all students whose names start with "John":
+```shell
+scan 'student', {FILTER => "ValueFilter(=, 'regexstring', '^John.*')"}
+```
+
+#### **18. Get Timestamp of a Cell**
+To retrieve the timestamp of John Doe's math grade in `grades:math` when it was last updated:
+```shell
+get 'student', '1', {COLUMN => 'grades:math', TIMESTAMP => true}
+```
+
+#### **19. Disable Table**
+To temporarily disable the `student` table:
+```shell
+disable 'student'
+```
+
+#### **20. Enable Table**
+To re-enable the `student` table after maintenance:
+```shell
+enable 'student'
+```
+
+#### **21. Drop Table**
+To permanently delete the `student` table and all its data:
+```shell
+drop 'student'
+```
+
+### **Summary of Key HBase Commands**
+
+- **create**: Used to create a table.
+- **put**: Used to insert data into a specific column.
+- **get**: Fetches data from a specific row and column.
+- **delete**: Deletes a specific column from a row.
+- **scan**: Scans all rows or a filtered set of rows.
+- **count**: Counts the number of rows in the table.
+- **deleteall**: Deletes the entire row.
+- **disable**: Disables a table temporarily.
+- **enable**: Re-enables a disabled table.
+- **drop**: Permanently deletes the table.
+
+Let me know if you need further assistance with these operations! 😊
