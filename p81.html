@@ -1,0 +1,89 @@
+AIM: Data Storage in Redis
+a) Implement caching functionality using Redis as a cache store.
+b) Store and retrieve data from Redis cache using appropriate commands.
+Theory: Implement caching functionality using Redis in a hypothetical programming
+language. Keep in mind that the exact implementation details may vary depending on the
+programming language you are using, as different languages may have different Redis client
+libraries.
+Let's assume we're working with Python and the redis-py library, which is a popular
+Redis client for Python.
+1. Implement caching functionality using Redis as a cache store using python.
+To install Python on Ubuntu, you can use the following steps
+a) sudo apt update
+b) sudo apt install python3
+c) sudo apt install python3-pip
+d) python3 –version
+e) python3 -m pip –version
+f) Use a text editor to write your Python script
+g) Save the file as redis-functionality.py
+import redis
+# Create a connection to the Redis server
+redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+def get_data_from_database(data_id):
+# Simulate fetching data from a database
+# In a real-world scenario, this could be a database query
+# Here, we'll just simulate it with a dictionary
+database_data = {
+"1": "Data for ID 1",
+"2": "Data for ID 2",
+"3": "Data for ID 3",
+}
+return database_data.get(data_id, None)
+def get_data_from_cache(data_id):
+# Try to fetch data from the cache
+cached_data = redis_client.get(data_id)
+if cached_data:
+# If data is found in the cache, return it
+return cached_data.decode('utf-8') # Assuming data is stored as bytes in Redis
+else:
+# If data is not in the cache, fetch it from the database
+database_data = get_data_from_database(data_id)
+# Store the fetched data in the cache for future use
+if database_data:
+
+redis_client.set(data_id, database_data)
+return database_data
+# Example usage
+data_id_to_fetch = "1"
+cached_data = get_data_from_cache(data_id_to_fetch)
+if cached_data:
+print(f"Data found in cache: {cached_data}")
+else:
+print("Data not found in cache. Fetching from database.")
+
+h) To tun the file in the command line type python3 redis-functionality.py
+
+(make sure you are in the right folder were you have saved redis-
+functionality.py)
+
+2. Store and retrieve data from Redis cache using appropriate commands.
+a) Connecting to Redis
+import redis
+# Create a connection to the Redis server
+redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+b) Storing Data in Redis
+data_id = "1"
+data_to_store = "Sample data to be stored in Redis"
+# SET command to store data in Redis
+redis_client.set(data_id, data_to_store)
+c) Retrieving Data from Redis
+# GET command to retrieve data from Redis
+cached_data = redis_client.get(data_id)
+if cached_data:
+print(f"Data found in Redis: {cached_data.decode('utf-8')}")
+else:
+print("Data not found in Redis.")
+d) Checking if a Key Exists
+key_exists = redis_client.exists(data_id)
+if key_exists:
+print("Key exists in Redis.")
+else:
+print("Key does not exist in Redis.")
+
+e) Deleting a Key from Redis
+# DEL command to delete a key from Redis
+deleted_keys = redis_client.delete(data_id)
+if deleted_keys > 0:
+print(f"Key '{data_id}' deleted from Redis.")
+else:
+print(f"Key '{data_id}' not found in Redis.")

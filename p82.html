@@ -1,0 +1,185 @@
+Here’s how to implement **Data Storage in Redis** with examples for both **caching functionality** and **storing and retrieving data**:
+
+---
+
+### **a) Implement Caching Functionality Using Redis as a Cache Store**
+
+#### **1. Set up Redis Cache**
+
+To set up Redis as a cache, you typically store frequently accessed data in Redis to avoid querying the database repeatedly. Redis is fast and ideal for caching.
+
+```bash
+# Start Redis server (assuming Redis is already installed)
+redis-server
+```
+
+#### **2. Store Data in Redis Cache**
+
+Use `SET` command to store data in Redis.
+
+```bash
+# Store a string value for a cache key (e.g., user session)
+SET "user:1001" "Alice"
+```
+
+Here, `"user:1001"` is the key, and `"Alice"` is the value.
+
+#### **3. Set Expiry Time for Cache**
+
+You can set an expiration time for a cache using the `EXPIRE` command to ensure the cache doesn’t stay forever.
+
+```bash
+# Set an expiry of 3600 seconds (1 hour) for the cache key
+EXPIRE "user:1001" 3600
+```
+
+#### **4. Retrieve Cached Data**
+
+To retrieve the cached value, use the `GET` command.
+
+```bash
+# Retrieve the value for the cache key 'user:1001'
+GET "user:1001"
+```
+
+This will return `"Alice"` if the key still exists in the cache.
+
+---
+
+### **b) Store and Retrieve Data from Redis Cache Using Appropriate Commands**
+
+#### **1. Store Data (Using `SET` Command)**
+
+Store a user's details in a Redis hash for structured data.
+
+```bash
+# Storing multiple fields for user data
+HSET "user:1001" "name" "Alice" "age" 30 "department" "HR"
+```
+
+This stores a Redis hash with fields `name`, `age`, and `department` under the key `user:1001`.
+
+#### **2. Retrieve Specific Field from the Hash (Using `HGET` Command)**
+
+Retrieve specific data from the hash.
+
+```bash
+# Retrieve 'name' field from user:1001 hash
+HGET "user:1001" "name"
+```
+
+This will return `"Alice"`.
+
+#### **3. Retrieve All Fields from the Hash (Using `HGETALL` Command)**
+
+```bash
+# Retrieve all fields from user:1001
+HGETALL "user:1001"
+```
+
+This will return all fields in the hash for `user:1001`, such as:
+
+```
+1) "name"
+2) "Alice"
+3) "age"
+4) "30"
+5) "department"
+6) "HR"
+```
+
+#### **4. Delete a Field from the Hash (Using `HDEL` Command)**
+
+To delete a specific field from the hash:
+
+```bash
+# Delete 'department' field from the user:1001 hash
+HDEL "user:1001" "department"
+```
+
+#### **5. Check If a Key Exists (Using `EXISTS` Command)**
+
+Check if a particular key exists in the cache.
+
+```bash
+# Check if 'user:1001' exists in Redis cache
+EXISTS "user:1001"
+```
+
+This will return `1` if the key exists, otherwise `0`.
+
+#### **6. Increment/Decrement Values in Redis (Using `INCR`/`DECR` Command)**
+
+Redis allows you to increment or decrement numbers stored as values.
+
+```bash
+# Increment 'age' by 1
+HINCRBY "user:1001" "age" 1
+```
+
+This will increase the `age` field by 1 for the key `user:1001`.
+
+#### **7. Remove Cache Data (Using `DEL` Command)**
+
+You can delete a specific key from the Redis cache.
+
+```bash
+# Delete the user:1001 key from Redis cache
+DEL "user:1001"
+```
+
+---
+
+### **Summary of Redis Commands:**
+
+1. **Set Data (Key-Value)**:
+```bash
+SET "user:1001" "Alice"
+```
+
+2. **Set Hash Data**:
+```bash
+HSET "user:1001" "name" "Alice" "age" 30 "department" "HR"
+```
+
+3. **Get Data**:
+```bash
+GET "user:1001"
+```
+
+4. **Get Specific Hash Field**:
+```bash
+HGET "user:1001" "name"
+```
+
+5. **Get All Fields in Hash**:
+```bash
+HGETALL "user:1001"
+```
+
+6. **Set Expiry for Cache**:
+```bash
+EXPIRE "user:1001" 3600
+```
+
+7. **Delete Specific Field from Hash**:
+```bash
+HDEL "user:1001" "department"
+```
+
+8. **Increment Field Value**:
+```bash
+HINCRBY "user:1001" "age" 1
+```
+
+9. **Check Key Existence**:
+```bash
+EXISTS "user:1001"
+```
+
+10. **Delete Key**:
+```bash
+DEL "user:1001"
+```
+
+These commands allow you to implement caching functionality and efficiently store/retrieve data in Redis.
