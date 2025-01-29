@@ -1,0 +1,232 @@
+### **MongoDB Queries: Working with Employee and Department Collections**
+
+#### **1. Create Database, Collections, and Insert Sample Data**
+
+First, switch to the `company` database:
+```js
+use company
+```
+
+Create the `employee` and `department` collections:
+```js
+db.createCollection("employee")
+db.createCollection("department")
+```
+
+Insert sample data into the `employee` collection (at least 10 rows):
+```js
+db.employee.insertMany([
+    {
+        "name": "Alice Johnson",
+        "age": 30,
+        "designation": "Software Developer",
+        "departmentId": 1
+    },
+    {
+        "name": "Bob Smith",
+        "age": 35,
+        "designation": "Database Administrator",
+        "departmentId": 2
+    },
+    {
+        "name": "Eva Davis",
+        "age": 28,
+        "designation": "UI/UX Designer",
+        "departmentId": 1
+    },
+    {
+        "name": "David Lee",
+        "age": 40,
+        "designation": "HR Manager",
+        "departmentId": 3
+    },
+    {
+        "name": "Grace Williams",
+        "age": 50,
+        "designation": "CEO",
+        "departmentId": 4
+    },
+    {
+        "name": "Henry Clark",
+        "age": 32,
+        "designation": "Software Engineer",
+        "departmentId": 1
+    },
+    {
+        "name": "Isabella Moore",
+        "age": 29,
+        "designation": "Marketing Specialist",
+        "departmentId": 2
+    },
+    {
+        "name": "Jack Harris",
+        "age": 38,
+        "designation": "Product Manager",
+        "departmentId": 5
+    },
+    {
+        "name": "Lily White",
+        "age": 34,
+        "designation": "Business Analyst",
+        "departmentId": 4
+    },
+    {
+        "name": "Mason King",
+        "age": 45,
+        "designation": "CTO",
+        "departmentId": 5
+    }
+])
+```
+
+Insert sample data into the `department` collection (at least 5 rows):
+```js
+db.department.insertMany([
+    {
+        "name": "IT",
+        "location": "New York"
+    },
+    {
+        "name": "HR",
+        "location": "Chicago"
+    },
+    {
+        "name": "Finance",
+        "location": "Los Angeles"
+    },
+    {
+        "name": "Management",
+        "location": "San Francisco"
+    },
+    {
+        "name": "Marketing",
+        "location": "Miami"
+    }
+])
+```
+
+---
+
+#### **2. Perform the Queries**
+
+1. **Retrieve all employees**:
+```js
+db.employee.find()
+```
+
+2. **Retrieve employees in a specific department (e.g., IT department)**:
+```js
+db.employee.find({"departmentId": 1})
+```
+
+3. **Retrieve all departments**:
+```js
+db.department.find()
+```
+
+4. **Retrieve employees older than 30 years**:
+```js
+db.employee.find({"age": {$gt: 30}})
+```
+
+5. **Retrieve employees sorted by age in ascending order**:
+```js
+db.employee.find().sort({"age": 1})
+```
+
+6. **Retrieve employees belonging to a specific department with their department details (using $lookup)**:
+```js
+db.employee.aggregate([
+    {
+        $lookup: {
+            from: "department",
+            localField: "departmentId",
+            foreignField: "_id",
+            as: "department_details"
+        }
+    }
+])
+```
+
+7. **Retrieve employees sorted by department and age**:
+```js
+db.employee.aggregate([
+    { $sort: { "departmentId": 1, "age": 1 } }
+])
+```
+
+8. **Increment the age of all employees by 1 year**:
+```js
+db.employee.updateMany({}, { $inc: { "age": 1 } })
+```
+
+9. **Rename a department (e.g., rename "IT" department to "Information Technology")**:
+```js
+db.department.updateOne(
+    { "name": "IT" },
+    { $set: { "name": "Information Technology" } }
+)
+```
+
+10. **Update an employee's information (e.g., update Bob Smith's age)**:
+```js
+db.employee.updateOne(
+    { "name": "Bob Smith" },
+    { $set: { "age": 36 } }
+)
+```
+
+11. **Update a department's location (e.g., update IT department's location to "San Francisco")**:
+```js
+db.department.updateOne(
+    { "name": "IT" },
+    { $set: { "location": "San Francisco" } }
+)
+```
+
+12. **Delete a specific employee by their ID**:
+```js
+db.employee.deleteOne({ "_id": ObjectId("employee_id_here") })
+```
+
+13. **Delete a specific department by its ID**:
+```js
+db.department.deleteOne({ "_id": ObjectId("department_id_here") })
+```
+
+14. **Delete employees older than 40 years**:
+```js
+db.employee.deleteMany({ "age": { $gt: 40 } })
+```
+
+15. **Delete employees not belonging to any department (where departmentId is null)**:
+```js
+db.employee.deleteMany({ "departmentId": null })
+```
+
+16. **Delete an employee (e.g., delete Alice Johnson from the employees)**:
+```js
+db.employee.deleteOne({ "name": "Alice Johnson" })
+```
+
+17. **Delete employees in a specific department (e.g., delete all employees in HR department)**:
+```js
+db.employee.deleteMany({ "departmentId": 2 })
+```
+
+18. **Delete a department (e.g., delete the HR department)**:
+```js
+db.department.deleteOne({ "name": "HR" })
+```
+
+---
+
+### **Explanation of Operations**
+- **InsertMany** is used to insert multiple documents into a collection at once.
+- **$lookup** is used for **joins** between collections in MongoDB, allowing you to combine documents from two collections.
+- **$inc** is used to increment a field (like age).
+- **$set** is used to update a field with a new value.
+- **$gt** is a comparison operator used to find values greater than a specified number.
+- **deleteOne** and **deleteMany** are used to remove specific documents from the collection based on a condition.
+
+Let me know if you need more details or have any questions! 😊
