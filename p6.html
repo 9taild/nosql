@@ -1,0 +1,176 @@
+Certainly! Here’s the divided version:
+
+### **a) Redis Data Manipulation**
+
+#### **1. String**
+
+- **Set Data:**
+```bash
+SET user:name "John Doe"
+```
+
+- **Get Data:**
+```bash
+GET user:name
+```
+
+- **Increment/Decrement:**
+```bash
+INCR counter
+DECR counter
+```
+
+#### **2. List**
+
+- **Push to List:**
+```bash
+LPUSH tasks "Task 1"
+```
+
+- **Get List Data:**
+```bash
+LRANGE tasks 0 -1
+```
+
+- **Pop from List:**
+```bash
+LPOP tasks
+```
+
+#### **3. Set**
+
+- **Add to Set:**
+```bash
+SADD fruits "Apple"
+```
+
+- **Get Set Data:**
+```bash
+SMEMBERS fruits
+```
+
+- **Remove from Set:**
+```bash
+SREM fruits "Banana"
+```
+
+#### **4. Sorted Set**
+
+- **Add to Sorted Set:**
+```bash
+ZADD leaderboard 10 "Alice"
+```
+
+- **Get Sorted Set Data:**
+```bash
+ZRANGE leaderboard 0 -1 WITHSCORES
+```
+
+#### **5. Hash**
+
+- **Set Data in Hash:**
+```bash
+HMSET user:1000 name "John" age 30 city "New York"
+```
+
+- **Get Data from Hash:**
+```bash
+HGET user:1000 name
+```
+
+- **Increment in Hash:**
+```bash
+HINCRBY user:1000 age 1
+```
+
+---
+
+### **b) Redis Query Operations**
+
+#### **1. Retrieve Specific Data**
+
+- **Get String:**
+```bash
+GET user:name
+```
+
+- **Get List Range:**
+```bash
+LRANGE tasks 0 1
+```
+
+- **Check Set Membership:**
+```bash
+SISMEMBER fruits "Apple"
+```
+
+- **Get Sorted Set Score:**
+```bash
+ZRANGE leaderboard 0 0 WITHSCORES
+```
+
+#### **2. Delete Data**
+
+- **Delete Key:**
+```bash
+DEL user:name
+```
+
+- **Remove List Item:**
+```bash
+LREM tasks 0 "Task 1"
+```
+
+- **Remove Set Item:**
+```bash
+SREM fruits "Banana"
+```
+
+Let me know if you need more details!
+
+####################################
+from sir:
+####################################
+A) Use Redis commands to manipulate and modify data stored in different data
+structures.
+1) Set a string value as your name
+SET mydata:username "sanjay"
+
+2) Get the string value which is your name
+GET mydata:username
+
+3) Set multiple fields in a hash i.e. set your age and email id
+HMSET mydata:info name "Sanjay" age 30 email "sanjay@example.com"
+
+4) Get specific field from a hash (get your name)
+HGET mydata:info name
+
+5) Add an element to the end of a list (add project as a tast in your profile)
+RPUSH mydata:tasks "project"
+
+6) Get all elements in a list
+LRANGE mydata:tasks 0 -1
+
+7) Add elements to a set
+SADD mydata:tags "Redis" "Data" "Example"
+
+8) Get all elements in a set
+SMEMBERS mydata:tags
+
+9) Add elements with scores to a sorted set
+ZADD mydata:scores 90 "English" 85 "science" 92 "Maths"
+
+10) Get the rank of an element in a sorted set (In the case for subject english)
+ZRANK mydata:scores "English"
+
+11) Get a range of elements from a sorted set by score
+ZRANGEBYSCORE mydata:scores 80 90
+
+12) Get the score of a member in a sorted set
+ZSCORE mydata:scores "English"
+
+13) Get an element from a list by index
+LINDEX mydata:tasks 1
+
+14) Get the number of members in a set
+SCARD mydata:tags
