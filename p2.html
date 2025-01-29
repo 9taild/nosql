@@ -1,0 +1,133 @@
+#p2:Aim - InteracƟng with Redis
+#a) Install Redis on your lab server or local machine. 
+#a) Installing Redis
+sudo apt-get update
+
+sudo apt-get install redis-server
+
+# ConnecƟng to Redis
+redis-cli
+
+#b) Store and retrieve data in Redis using various data structures like strings, lists, and sets. 
+#c) Implement basic Redis commands for data manipulaƟon and retrieval
+### (b) Store and Retrieve Data in Redis Using Various Data Structures  
+
+Redis supports multiple data structures like Strings, Lists, and Sets for efficient data storage and retrieval. 
+
+1. **Strings** 
+
+Redis Strings are simple key-value pairs where values can be text, numbers, or binary data. 
+
+Example: Store and Retrieve a String 
+```
+SET username "JohnDoe"
+GET username
+```
+SET stores a value ("JohnDoe") with the key "username". 
+GET retrieves the stored value. 
+
+Example: Incrementing and Decrementing Numeric Values 
+```
+SET count 10
+INCR count   # count becomes 11
+DECR count   # count becomes 10
+```
+INCR and DECR modify numeric values stored in Redis. 
+
+2. **Lists** 
+
+Redis Lists are ordered collections that support operations like push, pop, and range retrieval. 
+
+Example: Store and Retrieve a List 
+```
+RPUSH students "Alice" "Bob" "Charlie"
+LRANGE students 0 -1
+```
+RPUSH adds elements to the right of the list. 
+LRANGE students 0 -1 retrieves all elements from index 0 to -1 (entire list). 
+
+Example: Remove Elements from a List 
+```
+LPOP students   # Removes and returns the first element ("Alice")
+RPOP students   # Removes and returns the last element ("Charlie")
+```
+LPOP removes from the left, and RPOP removes from the right. 
+
+3. **Sets** 
+
+Redis Sets are unordered collections of unique values. 
+
+Example: Store and Retrieve a Set 
+```
+SADD colors "red" "blue" "green"
+SMEMBERS colors
+```
+SADD adds unique elements to the set. 
+SMEMBERS retrieves all elements from the set. 
+
+Example: Check if a Value Exists in a Set 
+```
+SISMEMBER colors "blue"
+```
+Returns 1 if "blue" exists in the set, otherwise 0. 
+
+Example: Remove an Element from a Set 
+```
+SREM colors "red"
+```
+SREM removes "red" from the set. 
+
+### (c) Implement Basic Redis Commands for Data Manipulation and Retrieval  
+
+1. **Key Management Commands** 
+```
+EXISTS username
+DEL username
+EXPIRE username 60
+TTL username
+```
+EXISTS checks if a key exists. 
+DEL deletes a key. 
+EXPIRE sets a time-to-live (TTL) of 60 seconds. 
+TTL shows the remaining time before expiration. 
+
+2. **Working with Hashes** 
+
+Redis Hashes store field-value pairs, useful for representing objects. 
+
+```
+HSET user:1 name "Alice" age "25" city "New York"
+HGET user:1 name
+HGETALL user:1
+```
+HSET stores multiple fields in a hash. 
+HGET retrieves a specific field value. 
+HGETALL retrieves all fields and values. 
+
+3. **Working with Sorted Sets** 
+
+Sorted sets store unique elements with an associated score, used for ranking and leaderboard systems. 
+
+```
+ZADD scores 100 "Alice" 200 "Bob"
+ZRANGE scores 0 -1 WITHSCORES
+```
+ZADD adds members with scores. 
+ZRANGE retrieves members with their scores. 
+
+4. **Transactions** 
+```
+MULTI
+SET user:1 "John"
+GET user:1
+EXEC
+```
+MULTI starts a transaction. 
+EXEC executes all queued commands atomically. 
+
+### Summary  
+
+(b) Store and Retrieve Data in Redis – SET, RPUSH, SADD, HSET, ZADD 
+(c) Implement Basic Commands – GET, LRANGE, SMEMBERS, HGET, ZRANGE, DEL, EXPIRE, MULTI, EXEC 
+
+This covers Redis data storage, retrieval, and manipulation using key data structures like Strings, Lists, and Sets, along with basic operations. Let me know if you need more advanced Redis topics like Pub/Sub, Streams, or Clustering.
